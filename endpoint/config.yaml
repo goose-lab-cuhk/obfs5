@@ -1,0 +1,25 @@
+# obfsgen endpoint settings. They are built into the binary; `-config FILE` reads
+# changes from a copy (the keys it leaves out keep these values). Times are in
+# seconds.
+
+client:
+  mode: async               # async | sync: which model the client's schedules use
+  conns: 16                 # TLS connections open at once, one schedule each
+  watchdog: 60              # rebuild the session after this long without a record from the server
+
+server:
+  session_idle: 600         # close a session that has had no connection this long
+
+tunnel:                     # one TLS connection, both ends
+  max_life: 120             # close a connection still open after this (model flows last up to 30 s)
+  handshake_timeout: 15     # TCP + TLS handshake; the server also waits this long for the first record
+
+scheduler:                  # asynchronous mode: a predicted receive is awaited until
+  alpha: 2.0                #   last event + alpha * quantile(lambda) + RTT + beta,
+  beta: 0.010               #   where quantile is that of the model's gap before the next receive
+  lambda: [0.90, 0.95]      # drawn uniformly for each deadline
+  max_rounds: 4             # deadlines passed in a row before a receive is ruled out
+
+kcp:                        # the session layer's KCP
+  window: 4096              # packets; ACKs return only in scheduled records, a small window stalls
+  mtu: 600                  # bytes

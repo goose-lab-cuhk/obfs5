@@ -1,0 +1,9 @@
+__pycache__/
+
+# data, runs and builds stay out of git
+/logs/
+/data/
+/runs/
+/obfsgen
+/endpoint/obfsgen
+/endpoint/dist/

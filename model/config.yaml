@@ -1,0 +1,59 @@
+# obfsgen settings. Every command takes --config to read a copy of this file.
+
+build:
+  workers: 8                  # processes, 1-2 GB of memory each
+  shard_mb: 256               # MB of logs per shard (.gz counts 6x)
+  keep_work: false            # keep OUT/work
+  max_packets: 500000         # longer connections are dropped
+  max_records: 500            # records kept per sequence
+  max_seconds: 30.0           # seconds of gaps kept per sequence
+  min_records: 3              # flows with a shorter sequence are dropped
+  split: [0.90, 0.05, 0.05]   # train, val, test
+  split_seed: 42
+  fit_flows: 500000           # training flows the tokenizers are fitted on
+
+tokenizer:
+  size_bins: 200
+  s_norm: 16384               # size value = bytes / s_norm
+  atom_share: 0.05            # sizes at least this frequent get their own bin
+  epsilon: 1.0e-8             # time value = ln(gap + epsilon)
+  time_floor: 0.001           # seconds; shorter gaps share bin 0
+  bins_per_decade: 4
+  peak_ratio: 3.0             # timer peaks: density over the grid bin's average
+  peak_min_share: 0.003
+  peak_halfwidth: 0.05
+  max_peaks: 8
+  intra_samples: 1000         # gap values kept per time bin
+  seed: 42
+
+model:
+  n_layers: 15
+  d_model: 256
+  d_state: 32
+  d_conv: 4
+  expand: 2
+  d_cond: 64
+
+train:
+  device: cuda                # cuda | cpu
+  fp16: true
+  epochs: 20
+  patience: 10                # epochs without a better validation loss
+  batch_tokens: 5353
+  eval_batch_tokens: 65536
+  chunk_batches: 100
+  lr: 5.0e-4
+  weight_decay: 0.01
+  warmup_steps: 2500          # then cosine decay to min_lr_ratio * lr
+  min_lr_ratio: 0.1
+  grad_clip: 1.0
+  seed: 42
+  loader_workers: 4
+  log_every: 500
+
+export:
+  dtype: int8                 # int8 | fp32
+
+score:
+  device: cuda                # cuda | cpu
+  batch_tokens: 65536

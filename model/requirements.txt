@@ -1,0 +1,7 @@
+numpy
+pyarrow
+pyyaml
+torch
+# For training on a GPU, also install the Mamba CUDA kernels:
+#   pip install mamba-ssm causal-conv1d
+# Without them the model runs on a pure-PyTorch block (export, score, CPU).
