@@ -57,7 +57,7 @@ Practitioners have argued for an obfuscator like this for years:
   ([NDSS 2025](https://www.ndss-symposium.org/ndss-paper/the-discriminative-power-of-cross-layer-rtts-in-fingerprinting-proxy-traffic/)).
 
 
-**Q: Why does no widely used obfuscator work this way? **
+**Q: Why does no widely used obfuscator work this way?**
 
 A: Because it has been unclear what shape such an obfuscator should send. Existing (application-driven) obfuscators do not have to confront this problem, because the shape of their traffic is whatever their padding, splitting and delays produce on top of the application's writes, but an obfuscator that keeps its own schedule must commit to a shape before it sends anything.
 
