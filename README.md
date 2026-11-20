@@ -56,6 +56,11 @@ Practitioners have argued for an obfuscator like this for years:
   pronounced, not less
   ([NDSS 2025](https://www.ndss-symposium.org/ndss-paper/the-discriminative-power-of-cross-layer-rtts-in-fingerprinting-proxy-traffic/)).
 
+
+**Q: Why does no widely used obfuscator work this way? **
+
+A: Because it has been unclear what shape such an obfuscator should send. Existing (application-driven) obfuscators do not have to confront this problem, because the shape of their traffic is whatever their padding, splitting and delays produce on top of the application's writes, but an obfuscator that keeps its own schedule must commit to a shape before it sends anything.
+
 **Q: What is a good shape, then?**
 
 A: A good shape is that of the traffic the tunnel will be compared against.
@@ -72,6 +77,14 @@ example:
 
 obfsgen does not define what normal is. It is a framework for turning a sample of
 whatever is considered normal into generative obfuscation.
+
+**Q: Why a generative model, rather than replaying recorded traffic?**
+
+A: Replaying flows from a sample of normal traffic seems simpler, since every replayed flow is a real one. A pool of N recorded flows, however, gives each tunnel flow at most log₂ N bits of entropy (one choice among N flows), or about 20 bits for a million flows. Each additional bit thus requires twice as many recorded flows, whereas the entropy of normal traffic grows with every record of a flow.
+
+Normal traffic also keeps producing shapes that no recording has seen before (a long tail of rare shapes). In contrast, a pool holds only a sample of that tail. The rare shapes in the pool therefore take the place of the many rare shapes that the pool missed. Which means those rare shapes that got into the sample would recur several times as often as they would in normal traffic. An observer who obtains the pool, for example because it ships with the tool, can look for these shapes.
+
+On the other hand, a generative approach like obfsgen learns how each record follows the ones before it, and composes each new flow * one record at a time *. It is thus not limited to the flows it has seen. More, the entropy of its flows grows with their length rather than with the size of a pool.
 
 **Q: How do I get started?**
 
